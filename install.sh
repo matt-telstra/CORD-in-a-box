@@ -4,10 +4,12 @@
 
 
 LOGFILE=~/install_logs.txt
-BRANCH=cord-4.1
+BRANCH=cord-5.0
 #POD_YAML=rcord-virtual.yml # default
 POD_YAML=mcord-ng40-virtual.yml
+POD_YAML_FULL=~/cord/build/podconfig/$POD_YAML
 LICENSE_F=~/cord/orchestration/xos_services/venb/xos/synchronizer/files/ng40-license
+LICENSE_EMAIL_F=~/license_email.txt
 
 set -e
 set -x
@@ -22,16 +24,15 @@ rm $LOGFILE -f
 # but we still want to install 4.1 (don't we?)
 # so manually install vagrant first
 
-echo "uninistalling existing vagrant installations" | tee $LOGFILE -a
-sudo rm -rf /opt/vagrant /usr/bin/vagrant ~/.vagrant.d
-echo "Installing vagrant and associated tools..." | tee $LOGFILE -a
-sudo apt-get -y install qemu-kvm libvirt-bin libvirt-dev nfs-kernel-server
-sudo adduser $USER libvirtd
-
-VAGRANT_SHA256SUM="2f9498a83b3d650fcfcfe0ec7971070fcd3803fad6470cf7da871caf2564d84f"  # version 2.0.1
-curl -o /tmp/vagrant.deb https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb
-echo "$VAGRANT_SHA256SUM  /tmp/vagrant.deb" | sha256sum -c -
-sudo dpkg -i /tmp/vagrant.deb
+#echo "uninistalling existing vagrant installations" | tee $LOGFILE -a
+#sudo rm -rf /opt/vagrant /usr/bin/vagrant ~/.vagrant.d
+#echo "Installing vagrant and associated tools..." | tee $LOGFILE -a
+#sudo apt-get -y install qemu-kvm libvirt-bin libvirt-dev nfs-kernel-server
+#sudo adduser $USER libvirtd
+#VAGRANT_SHA256SUM="2f9498a83b3d650fcfcfe0ec7971070fcd3803fad6470cf7da871caf2564d84f"  # version 2.0.1
+#curl -o /tmp/vagrant.deb https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb
+#echo "$VAGRANT_SHA256SUM  /tmp/vagrant.deb" | sha256sum -c -
+#sudo dpkg -i /tmp/vagrant.deb
 
 echo 'downloading bootstrap script' | tee $LOGFILE -a
 curl -o ~/cord-bootstrap.sh https://raw.githubusercontent.com/opencord/cord/$BRANCH/scripts/cord-bootstrap.sh
@@ -45,6 +46,10 @@ echo 'running bootstrap script' | tee $LOGFILE -a
 cp ~/ng40-license $LICENSE_F
 
 cd ~/cord/build
+echo 'getting email for license' | tee $LOGFILE -a
+EMAIL=$(cat $LICENSE_EMAIL_F)
+echo 'adding email $EMAIL for license' | tee $LOGFILE -a
+echo "mcord_ng40_license_email: $EMAIL" >> $POD_YAML_FULL
 echo 'running make config on pod $POD_YAML' | tee $LOGFILE -a
 make PODCONFIG=$POD_YAML config
 echo 'running makescript' | tee $LOGFILE -a
