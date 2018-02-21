@@ -49,7 +49,20 @@ cd ~/cord/build
 echo 'getting email for license' | tee $LOGFILE -a
 EMAIL=$(cat $LICENSE_EMAIL_F)
 echo 'adding email $EMAIL for license' | tee $LOGFILE -a
+INITIAL_YAML_LEN=$(stat --printf="%s" $POD_YAML_FULL) # file size
+cp $POD_YAML_FULL $POD_YAML_FULL.backup
 echo "mcord_ng40_license_email: $EMAIL" >> $POD_YAML_FULL
+NEW_YAML_LEN=$(stat --printf="%s" $POD_YAML_FULL) # file size
+if [ $INITIAL_YAML_LEN -lt $NEW_YAML_LEN ]
+then
+    # for some reason the yaml file is empty aside from $EMAIL
+    # this is just a sanity check
+    echo "$POD_YAML_FULL modified to add $EMAIL"
+    rm $POD_YAML_FULL.backup
+else
+    echo 'hmm, something went wrong with the yaml modification'
+    exit 1
+fi
 echo 'running make config on pod $POD_YAML' | tee $LOGFILE -a
 make PODCONFIG=$POD_YAML config
 echo 'running makescript' | tee $LOGFILE -a
