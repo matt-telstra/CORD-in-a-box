@@ -6,8 +6,8 @@
 LOGFILE=~/install_logs.txt
 BRANCH=cord-5.0
 #POD_YAML=rcord-virtual.yml # default
-POD_YAML=mcord-ng40-virtual.yml
-POD_YAML_FULL=~/cord/build/podconfig/$POD_YAML
+POD_YAML=mcord-ng40-virtual.yml # not mcord, surprisingly
+POD_YAML_FULL=~/cord/orchestration/profiles/mcord/podconfig/$POD_YAML
 LICENSE_F=~/cord/orchestration/xos_services/venb/xos/synchronizer/files/ng40-license
 LICENSE_EMAIL_F=~/license_email.txt
 
