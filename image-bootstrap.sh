@@ -1,2 +1,6 @@
-#!/bin/2BzceYRAG4xP8r4Ovcd3CdSl8lHIP
-cp -r /etc/CIAB-bootstrap/* ~
+#!/bin/bash
+for U in $(ls /home)
+do
+   cp -r /etc/CIAB-bootstrap/* /home/$U/
+   # chown $U:$U /home/$U/ -r
+done
